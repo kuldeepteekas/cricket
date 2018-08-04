@@ -16,6 +16,7 @@
 #include "extensions/cocos-ext.h"
 #include "ui/UIPageView.h"
 #include "commonClasses.h"
+#include "ScoreboardLayer.hpp"
 
 using namespace cocos2d::ui;
 USING_NS_CC;
@@ -82,12 +83,14 @@ public:
     
     void createPlayerBoxes();
     void createBackground();
+    void createScoreBoardIcon();
+    
     void dataForBallAction();
+    void initialiseGameData();
     
     int getRandomNumber(int min, int max);
-    
     int getRunForBallAction(std::string action);
-    void initialiseGameData();
+    
     void createCurrentBatsmanText();
     void createFooterItems();
     void createNotificationBg();
@@ -96,35 +99,35 @@ public:
     void createTurnArrow();
     void createGroundImage();
     void createNextButton();
+    
     bool getIsValidDelivery(std::string action);
     bool isWicketDown(std::string action);
+    bool isRunExtra(std::string action);
     
     void updateGame(float dt);
     
     void hideTurnArrows();
-    
     void setNextGameState(GAME_STATES nextState);
     void setGroundText(std::string message);
     void handleGameOver();
+    void onTurnReceived(int teamIndex);
     
     void updateDataPerBall(int teamIndex, int run, std::string action);
-    
     void updateUIPerBall();
     void updateUIOnWicketFall();
     void updateCurrentPlayerBattingStatus();
     void updateDataOnWicket(int index, std::string action);
-    
     void updateOverLabel();
     void updateTeamScores();
     void updateTeamHeaderText();
     void updateTeamFooterText();
-    void onTurnReceived(int teamIndex);
     void updateNotification(std::string notification);
     void updateCurrentPlayerUITeamOne(bool updatePlayerImage = false);
     void updateCurrentPlayerUITeamTwo(bool updatePlayerImage = false);
     
     void playBallItemCallback(Ref* pSender);
     void nextItemCallback(Ref* pSender);
+    void scoreBoardCallback(Ref* pSender);
     CREATE_FUNC(MainScene);
     
     virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pEvent);

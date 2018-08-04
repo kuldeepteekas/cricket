@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../Classes/MainScene.cpp"
-            timestampString = "555090206.2267981"
+            filePath = "../Classes/ScoreboardLayer.cpp"
+            timestampString = "555106237.117955"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "389"
-            endingLineNumber = "389"
-            landmarkName = "MainScene::playBallItemCallback(Ref* pSender)"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "ScoreboardLayer::setGameData(GameData* data)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,45 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../Classes/MainScene.cpp"
-            timestampString = "555090206.227344"
+            filePath = "../Classes/ScoreboardLayer.cpp"
+            timestampString = "555106237.11929"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "393"
-            endingLineNumber = "393"
-            landmarkName = "MainScene::playBallItemCallback(Ref* pSender)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Classes/MainScene.cpp"
-            timestampString = "555090206.2276649"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "401"
-            endingLineNumber = "401"
-            landmarkName = "MainScene::playBallItemCallback(Ref* pSender)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Classes/MainScene.cpp"
-            timestampString = "555090206.227929"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "627"
-            endingLineNumber = "627"
-            landmarkName = "MainScene::updateCurrentPlayerUITeamTwo(bool updatePlayerImage)"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "ScoreboardLayer::onEnter()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

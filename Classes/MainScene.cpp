@@ -77,6 +77,7 @@ void MainScene::onEnter(){
     createCurrentBatsmanText();
     createFooterItems();
     createNotificationBg();
+    createScoreBoardIcon();
     
     updateTeamHeaderText();
     updateTeamFooterText();
@@ -290,6 +291,7 @@ void MainScene::updateDataOnWicket(int index, std::string action) {
 void MainScene::updateUIOnWicketFall() {
     updateCurrentPlayerUITeamOne(true);
     updateCurrentPlayerUITeamTwo(true);
+    updateCurrentPlayerBattingStatus();
     updateTeamScores();
     
 }
@@ -368,7 +370,11 @@ void MainScene::updateDataPerBall(int teamIndex, int run, std::string action) {
         
         bool isDeliveryValid = getIsValidDelivery(action);
         m_gameData->m_teamVector->at(teamIndex)->m_teamScore += run;
-        m_gameData->m_teamVector->at(teamIndex)->m_players->at(playerIndex)->m_runs += run;
+        
+        if (!isRunExtra(action))
+            m_gameData->m_teamVector->at(teamIndex)->m_players->at(playerIndex)->m_runs += run;
+        else
+            m_gameData->m_teamVector->at(teamIndex)->m_extraRun += run;
             
         if (isDeliveryValid) {
             m_gameData->m_teamVector->at(teamIndex)->m_players->at(playerIndex)->m_ballsPlayed += 1;
@@ -426,6 +432,16 @@ void MainScene::dataForBallAction(){
     m_ballActionVector->push_back("Wide Ball");
     m_ballActionVector->push_back("Out");
     m_ballActionVector->push_back("1 Leg By Run");
+}
+
+bool MainScene::isRunExtra(std::string action) {
+    
+    bool result = false;
+    if (action == "1 By Run" || action == "1 Leg By Run" || action == "No Ball" || action == "Wide Ball")
+        result = true;
+    
+    return result;
+    
 }
 
 bool MainScene::isWicketDown(std::string action) {
@@ -932,6 +948,29 @@ void MainScene::initialiseGameData() {
     
     m_gameData->m_teamVector->push_back(teamOne);
     m_gameData->m_teamVector->push_back(teamTwo);
+}
+
+void MainScene::createScoreBoardIcon() {
+    
+    Sprite* scoreboardIcon =  Sprite::create(IMAGE_PATH"scoreBoard.png");
+    
+    MenuItemSprite* scoreCardItem = MenuItemSprite::create(scoreboardIcon, scoreboardIcon,CC_CALLBACK_1(MainScene::scoreBoardCallback, this));
+    scoreCardItem->setPosition(Vec2(visibleSize.width - scoreCardItem->getContentSize().width * 0.75,
+                                    m_headerLayer->getContentSize().height * 0.5));
+    
+    auto scoreMenu = Menu::create(scoreCardItem, NULL);
+    scoreMenu->setPosition(Vec2(0,0));
+    m_headerLayer->addChild(scoreMenu);
+    
+}
+
+void MainScene::scoreBoardCallback(Ref* pSender) {
+    
+    CCLOG("Scoreboard layer clicked");
+    ScoreboardLayer* scoreBoard = ScoreboardLayer::createLayer();
+    scoreBoard->setGameData(m_gameData);
+    scoreBoard->setPosition(Vec2(0,0));
+    this->addChild(scoreBoard);
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pEvent){
