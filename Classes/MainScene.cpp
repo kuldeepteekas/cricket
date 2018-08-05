@@ -18,10 +18,13 @@ using namespace std;
 
 #define FONT_SIZE_MENUITEM                  27
 #define MAX_PLAYER                          5
-#define MAX_OVER                            1
+#define MAX_OVER                            5
 
 #define BALL_ANIMATION_TAG                  1001
 #define TIME_DURATION                       1
+
+#define zOrderScoreBoard                    500
+#define zOrderResultLayer                   501
 
 Scene* MainScene::createScene(){
     auto scene = Scene::create();
@@ -421,10 +424,16 @@ void MainScene::nextItemCallback(Ref* pSender) {
 }
 
 int MainScene::getRandomNumber(int min, int max) {
+    int num = RandomHelper::random_int(min, max);
+    return num;
+    
+    //old implementation
+    /*
     srand(time(0));
     int num = (rand() % (max - min + 1)) + min;
     CCLOG("Index is %d", num);
     return num;
+     */
 }
 
 void MainScene::updateDataPerBall(int teamIndex, int run, std::string action) {
@@ -542,16 +551,16 @@ void MainScene::dataForBallAction(){
     
     m_ballActionVector->push_back("Single");
     m_ballActionVector->push_back("Dot Ball");
+    m_ballActionVector->push_back("Wide Ball");
+    m_ballActionVector->push_back("Out");
     m_ballActionVector->push_back("Double");
     m_ballActionVector->push_back("Triple");
+    m_ballActionVector->push_back("1 Leg By Run");
 //    m_ballActionVector->push_back("Run Out");
     m_ballActionVector->push_back("Four");
 //    m_ballActionVector->push_back("No Ball");
-    m_ballActionVector->push_back("Six");
     m_ballActionVector->push_back("1 By Run");
-//    m_ballActionVector->push_back("Wide Ball");
-    m_ballActionVector->push_back("Out");
-    m_ballActionVector->push_back("1 Leg By Run");
+    m_ballActionVector->push_back("Six");
 }
 
 bool MainScene::isRunExtra(std::string action) {
@@ -683,9 +692,14 @@ void MainScene::createNextButton() {
     m_nextItem = MenuItemSprite::create(nextSprite, nextSprite,CC_CALLBACK_1(MainScene::nextItemCallback, this));
     m_nextItem->setPosition(Vec2(visibleSize.width * 0.625, visibleSize.height * 0.475));
     
-    auto ballMenu = Menu::create(m_nextItem, NULL);
-    ballMenu->setPosition(Vec2(0,0));
-    this->addChild(ballMenu);
+    MoveBy* moveForward = MoveBy::create(0.5, Vec2(5,0));
+    MoveBy* moveBackward = MoveBy::create(0.5, Vec2(-5,0));
+    Sequence* animationAction = Sequence::create(moveForward, moveBackward,NULL);
+    m_nextItem->runAction(RepeatForever::create(animationAction));
+    
+    auto nextMenu = Menu::create(m_nextItem, NULL);
+    nextMenu->setPosition(Vec2(0,0));
+    this->addChild(nextMenu);
 }
 
 void MainScene::createPlayBallButton() {
@@ -1011,6 +1025,8 @@ void MainScene::initialiseGameData() {
     playerOne->m_isCaptain = true;
     playerOne->m_playerName = "Virat Kohli";
     playerOne->m_imagePath = "viratKohli.jpg";
+    playerOne->m_winningImage = "kohliWon.jpg";
+    playerOne->m_losingImage = "kohliLose.jpg";
     
     Player* playerTwo = new Player();
     playerTwo->m_isMyPlayer = false;
@@ -1036,10 +1052,10 @@ void MainScene::initialiseGameData() {
     playerFive->m_playerName = "Rahul Dravid";
     playerFive->m_imagePath = "rahulDravid.jpg";
     
+    teamOne->m_players->push_back(playerFour);
+    teamOne->m_players->push_back(playerThree);
     teamOne->m_players->push_back(playerOne);
     teamOne->m_players->push_back(playerTwo);
-    teamOne->m_players->push_back(playerThree);
-    teamOne->m_players->push_back(playerFour);
     teamOne->m_players->push_back(playerFive);
     
     
@@ -1052,12 +1068,14 @@ void MainScene::initialiseGameData() {
     player1->m_isCaptain = true;
     player1->m_playerName = "Alaistar Cook";
     player1->m_imagePath = "cook.jpg";
+    player1->m_losingImage = "cookLose.jpg";
+    player1->m_winningImage = "cookWon.jpg";
     
     Player* player2 = new Player();
     player2->m_isMyPlayer = false;
     player2->m_isCaptain = false;
     player2->m_playerName = "Joe Root";
-    player2->m_imagePath = "root.jpeg";
+    player2->m_imagePath = "root.jpg";
     
     Player* player3 = new Player();
     player3->m_isMyPlayer = false;
@@ -1102,12 +1120,11 @@ void MainScene::createScoreBoardIcon() {
 }
 
 void MainScene::showResultPopUp() {
-    
     CCLOG("Showing result layer");
     ResultLayer* resultLayer = ResultLayer::createLayer();
     resultLayer->setGameData(m_gameData);
     resultLayer->setPosition(Vec2(0,0));
-    this->addChild(resultLayer);
+    this->addChild(resultLayer, zOrderResultLayer);
 }
 
 void MainScene::scoreBoardCallback(Ref* pSender) {
@@ -1115,7 +1132,7 @@ void MainScene::scoreBoardCallback(Ref* pSender) {
     ScoreboardLayer* scoreBoard = ScoreboardLayer::createLayer();
     scoreBoard->setGameData(m_gameData);
     scoreBoard->setPosition(Vec2(0,0));
-    this->addChild(scoreBoard);
+    this->addChild(scoreBoard, zOrderScoreBoard);
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pEvent){

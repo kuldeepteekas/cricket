@@ -201,7 +201,9 @@ void ResultLayer::createPlayerHolder() {
         if (i == 0) {
             
             if (winningCaptain != nullptr) {
-                imagePath = winningCaptain->m_imagePath;
+                imagePath = winningCaptain->m_winningImage;
+                if (imagePath.empty())
+                    imagePath = winningCaptain->m_imagePath;
                 playerName = winningCaptain->m_playerName;
                 playerName = "WINNING CAPTAIN \n" + playerName;
             }
@@ -217,7 +219,9 @@ void ResultLayer::createPlayerHolder() {
             playerBg->setPosition(Vec2(visibleSize.width * 0.5,20));
         }else {
             if (losingCaptain != nullptr) {
-                imagePath = losingCaptain->m_imagePath;
+                imagePath = losingCaptain->m_losingImage;
+                if (imagePath.empty())
+                    imagePath = losingCaptain->m_imagePath;
                 playerName = losingCaptain->m_playerName;
                 playerName = "LOSING CAPTAIN \n" + playerName;
             }

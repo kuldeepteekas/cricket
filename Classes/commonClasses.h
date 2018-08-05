@@ -26,9 +26,11 @@ enum BATTING_STATUS {
 };
 
 struct Player {
-    
     std::string m_playerName;
     std::string m_imagePath;
+    std::string m_winningImage;
+    std::string m_losingImage;
+    
     BATTING_STATUS m_battingStatus;
     
     int m_runs;
@@ -39,8 +41,10 @@ struct Player {
     Player () {
         m_playerName = "";
         m_imagePath = "";
-        m_battingStatus = BATTING_STATUS::BATSMAN_YET_TO_BAT;
+        m_winningImage = "";
+        m_losingImage = "";
         
+        m_battingStatus = BATTING_STATUS::BATSMAN_YET_TO_BAT;
         m_runs = 0;
         m_ballsPlayed = 0;
         m_isCaptain = false;
@@ -50,6 +54,8 @@ struct Player {
     Player(const Player* player) {
         m_playerName = player->m_playerName;
         m_imagePath = player->m_imagePath;
+        m_winningImage = player->m_winningImage;
+        m_losingImage = player->m_losingImage;
         m_runs = player->m_runs;
         m_ballsPlayed = player->m_ballsPlayed;
         m_isCaptain = player->m_isCaptain;
@@ -60,6 +66,8 @@ struct Player {
     Player(const Player& player) {
         m_playerName = player.m_playerName;
         m_imagePath = player.m_imagePath;
+        m_winningImage = player.m_winningImage;
+        m_losingImage = player.m_losingImage;
         m_runs = player.m_runs;
         m_ballsPlayed = player.m_ballsPlayed;
         m_isCaptain = player.m_isCaptain;
