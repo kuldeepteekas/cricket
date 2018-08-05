@@ -17,6 +17,7 @@
 #include "ui/UIPageView.h"
 #include "commonClasses.h"
 #include "ScoreboardLayer.hpp"
+#include "ResultLayer.hpp"
 
 using namespace cocos2d::ui;
 USING_NS_CC;
@@ -39,6 +40,7 @@ public:
     GameData* m_gameData;
     std::vector<std::string> *m_ballActionVector;
     
+    int messageCount;
     int m_teamTurnIndex;
     int m_ballsTillNow;
     bool m_isAllOverUp;
@@ -118,6 +120,8 @@ public:
     void handleAllOverUp();
     
     void onTurnReceived(int teamIndex);
+    
+    void showResultPopUp();
     
     void updateDataPerBall(int teamIndex, int run, std::string action);
     void updateUIPerBall();

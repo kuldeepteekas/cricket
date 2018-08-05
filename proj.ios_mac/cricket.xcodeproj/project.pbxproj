@@ -39,6 +39,7 @@
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
 		BB0531A621160D1F00E50979 /* ScoreboardLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB0531A421160D1F00E50979 /* ScoreboardLayer.cpp */; };
+		BB0531AA2117410A00E50979 /* ResultLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB0531A82117410900E50979 /* ResultLayer.cpp */; };
 		BBBB769F2114AC1600EE3BA4 /* MainScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBBB769B2114AC1600EE3BA4 /* MainScene.cpp */; };
 		BBBB76A72114AC3E00EE3BA4 /* images in Resources */ = {isa = PBXBuildFile; fileRef = BBBB76A02114AC3D00EE3BA4 /* images */; };
 		BBBB76AD2114AC3E00EE3BA4 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = BBBB76A62114AC3E00EE3BA4 /* icons */; };
@@ -130,6 +131,8 @@
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BB0531A421160D1F00E50979 /* ScoreboardLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScoreboardLayer.cpp; sourceTree = "<group>"; };
 		BB0531A521160D1F00E50979 /* ScoreboardLayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ScoreboardLayer.hpp; sourceTree = "<group>"; };
+		BB0531A82117410900E50979 /* ResultLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResultLayer.cpp; sourceTree = "<group>"; };
+		BB0531A92117410900E50979 /* ResultLayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResultLayer.hpp; sourceTree = "<group>"; };
 		BBBB769A2114AC0C00EE3BA4 /* AppMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppMacros.h; sourceTree = "<group>"; };
 		BBBB769B2114AC1600EE3BA4 /* MainScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainScene.cpp; sourceTree = "<group>"; };
 		BBBB769C2114AC1600EE3BA4 /* MainScene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MainScene.hpp; sourceTree = "<group>"; };
@@ -292,17 +295,19 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				BBBB76AF2114AC9700EE3BA4 /* SplashScene.cpp */,
-				BBBB76AE2114AC9700EE3BA4 /* SplashScene.h */,
+				BBBB769A2114AC0C00EE3BA4 /* AppMacros.h */,
+				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
+				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				BBBB769E2114AC1600EE3BA4 /* commonClasses.h */,
 				BBBB769D2114AC1600EE3BA4 /* constant.h */,
+				BB0531A82117410900E50979 /* ResultLayer.cpp */,
+				BB0531A92117410900E50979 /* ResultLayer.hpp */,
 				BBBB769B2114AC1600EE3BA4 /* MainScene.cpp */,
 				BBBB769C2114AC1600EE3BA4 /* MainScene.hpp */,
 				BB0531A421160D1F00E50979 /* ScoreboardLayer.cpp */,
 				BB0531A521160D1F00E50979 /* ScoreboardLayer.hpp */,
-				BBBB769A2114AC0C00EE3BA4 /* AppMacros.h */,
-				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
-				46880B8519C43A87006E1F66 /* AppDelegate.h */,
+				BBBB76AF2114AC9700EE3BA4 /* SplashScene.cpp */,
+				BBBB76AE2114AC9700EE3BA4 /* SplashScene.h */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -464,6 +469,7 @@
 				BBBB76B02114AC9800EE3BA4 /* SplashScene.cpp in Sources */,
 				BB0531A621160D1F00E50979 /* ScoreboardLayer.cpp in Sources */,
 				BBBB769F2114AC1600EE3BA4 /* MainScene.cpp in Sources */,
+				BB0531AA2117410A00E50979 /* ResultLayer.cpp in Sources */,
 				1AF87B8B1F6F782A007BE51C /* RootViewController.mm in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				1AF87B8A1F6F7822007BE51C /* main.m in Sources */,

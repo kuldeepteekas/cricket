@@ -68,11 +68,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
 //     create a scene. it's an autorelease object
-    auto scene = SplashScene::createScene();
-    director->runWithScene(scene);
-
-//    auto scene = MainScene::createScene();
+//    auto scene = SplashScene::createScene();
 //    director->runWithScene(scene);
+
+    auto scene = MainScene::createScene();
+    director->runWithScene(scene);
     
     return true;
 }

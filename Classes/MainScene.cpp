@@ -18,7 +18,7 @@ using namespace std;
 
 #define FONT_SIZE_MENUITEM                  27
 #define MAX_PLAYER                          5
-#define MAX_OVER                            5
+#define MAX_OVER                            1
 
 #define BALL_ANIMATION_TAG                  1001
 #define TIME_DURATION                       1
@@ -47,6 +47,7 @@ bool MainScene::init(){
     m_teamTurnIndex = 0;
     m_ballsTillNow = 0;
     m_isAllOverUp = false;
+    messageCount = 0;
     
     return true;
 }
@@ -166,8 +167,15 @@ void MainScene::updateGame(float dt) {
                 
             case STATE_RESULT: {
                 CCLOG("update game result");
+                showResultPopUp();
+                this->unschedule(CC_SCHEDULE_SELECTOR(MainScene::updateGame));
             }
                 break;
+            case STATE_GAMEOVER: {
+                CCLOG("game over");
+                setNextGameState(STATE_RESULT);
+                break;
+            }
                 
             default:
                 break;
@@ -268,9 +276,8 @@ void MainScene::updateUIPerBall() {
 
 void MainScene::handleGameOver(RESULT_STATUS matchStatus) {
     CCLOG("handle game over");
-    setNextGameState(STATE_RESULT);
+    setNextGameState(STATE_GAMEOVER);
     updateTeamScores();
-    this->unschedule(CC_SCHEDULE_SELECTOR(MainScene::updateGame));
     updateNotification("MATCH OVER");
     
     if (matchStatus == TEAM_ONE_WIN) {
@@ -368,7 +375,6 @@ void MainScene::updateCurrentPlayerBattingStatus() {
 
 void MainScene::nextItemCallback(Ref* pSender) {
     CCLOG("Inside next item");
-    static int messageCount = 0;
     std::string message = "";
     if (messageCount == 0) {
         message = "Two Captains out in the middle for toss. \n Let's Toss";
@@ -409,6 +415,7 @@ void MainScene::nextItemCallback(Ref* pSender) {
         m_teamTurnIndex = 0;
         updateNotification("PLAY");
         setNextGameState(STATE_TURN_TEAM_ONE);
+        messageCount = 0;
         return;
     }
 }
@@ -1094,8 +1101,16 @@ void MainScene::createScoreBoardIcon() {
     
 }
 
-void MainScene::scoreBoardCallback(Ref* pSender) {
+void MainScene::showResultPopUp() {
     
+    CCLOG("Showing result layer");
+    ResultLayer* resultLayer = ResultLayer::createLayer();
+    resultLayer->setGameData(m_gameData);
+    resultLayer->setPosition(Vec2(0,0));
+    this->addChild(resultLayer);
+}
+
+void MainScene::scoreBoardCallback(Ref* pSender) {
     CCLOG("Scoreboard layer clicked");
     ScoreboardLayer* scoreBoard = ScoreboardLayer::createLayer();
     scoreBoard->setGameData(m_gameData);
@@ -1112,6 +1127,9 @@ void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pEvent){
 
 void MainScene::onExit(){
     CCLOG("On exit Main Scene called");
+    if (m_gameData != nullptr)
+        delete m_gameData;
+    
     listener->release();
     Layer::onExit();
 }
