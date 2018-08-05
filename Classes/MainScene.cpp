@@ -45,7 +45,8 @@ bool MainScene::init(){
     m_keyboardListener = NULL;
     m_ballActionVector = nullptr;
     m_teamTurnIndex = 0;
-    m_ballCurrOver = 0;
+    m_ballsTillNow = 0;
+    m_isAllOverUp = false;
     
     return true;
 }
@@ -133,12 +134,23 @@ void MainScene::updateGame(float dt) {
                         m_teamTurnIndex = 0;
                     }
                 }
-                if (m_teamTurnIndex == 0)
-                    setNextGameState(STATE_TURN_TEAM_ONE);
-                else
-                    setNextGameState(STATE_TURN_TEAM_TWO);
                 
-                //setNextGameState(STATE_TURN_TEAM_TWO);
+                if (m_teamTurnIndex == 0){
+                    if (!isTeamAllOut(0))
+                        setNextGameState(STATE_TURN_TEAM_ONE);
+                    else{
+                        setNextGameState(STATE_TURN_TEAM_TWO);
+                        m_teamTurnIndex = 1;
+                    }
+                }else{
+                    if (!isTeamAllOut(1))
+                        setNextGameState(STATE_TURN_TEAM_TWO);
+                    else{
+                        setNextGameState(STATE_TURN_TEAM_ONE);
+                        m_teamTurnIndex = 0;
+                    }
+                }
+                
             }
                 break;
             case STATE_OUT_TEAM_ONE: {
@@ -153,7 +165,6 @@ void MainScene::updateGame(float dt) {
                 break;
                 
             case STATE_RESULT: {
-                
                 CCLOG("update game result");
             }
                 break;
@@ -255,8 +266,41 @@ void MainScene::updateUIPerBall() {
     updateCurrentPlayerUITeamTwo();
 }
 
-void MainScene::handleGameOver() {
+void MainScene::handleGameOver(RESULT_STATUS matchStatus) {
     CCLOG("handle game over");
+    setNextGameState(STATE_RESULT);
+    updateTeamScores();
+    this->unschedule(CC_SCHEDULE_SELECTOR(MainScene::updateGame));
+    updateNotification("MATCH OVER");
+    
+    if (matchStatus == TEAM_ONE_WIN) {
+        CCLOG("team one won the match");
+        std::string teamName = m_gameData->m_teamVector->at(0)->m_teamName;
+        std::string message = teamName + " won the match";
+        setGroundText(message);
+        
+    }else if (matchStatus == TEAM_TWO_WIN) {
+        CCLOG("team two won the match");
+        std::string teamName = m_gameData->m_teamVector->at(1)->m_teamName;
+        std::string message = teamName + " won the match";
+        setGroundText(message);
+        
+    }else if (matchStatus == MATCH_TIE) {
+        CCLOG("match tied");
+        setGroundText("MATCH TIE. \n SUPER OVER !");
+    }
+}
+
+void MainScene::handleTeamAllOut(int teamIndex){
+    CCLOG("team all out %d", teamIndex);
+    m_gameData->m_teamVector->at(teamIndex)->m_isAllOut = true;
+    
+    if (teamIndex == 0) {
+        m_gameData->m_teamVector->at(1)->m_targetToChase = m_gameData->m_teamVector->at(0)->m_teamScore + 1;
+    }else if (teamIndex == 1){
+        m_gameData->m_teamVector->at(0)->m_targetToChase = m_gameData->m_teamVector->at(1)->m_teamScore + 1;
+    }
+    
 }
 
 void MainScene::updateDataOnWicket(int index, std::string action) {
@@ -274,14 +318,12 @@ void MainScene::updateDataOnWicket(int index, std::string action) {
         if (index == 0) {
             m_currPlayerIndexT1++;
             if (m_currPlayerIndexT1 >= m_gameData->m_maxPlayer) {
-                m_currPlayerIndexT1 = m_gameData->m_maxPlayer - 1;
-                handleGameOver();
+                handleTeamAllOut(0);
             }
         }else{
             m_currPlayerIndexT2++;
             if (m_currPlayerIndexT2 >= m_gameData->m_maxPlayer) {
-                m_currPlayerIndexT2 = m_gameData->m_maxPlayer - 1;
-                handleGameOver();
+                handleTeamAllOut(1);
             }
         }
     }
@@ -296,11 +338,31 @@ void MainScene::updateUIOnWicketFall() {
     
 }
 
+bool MainScene::isTeamAllOut(int teamIndex) {
+    
+    bool result = false;
+    if (teamIndex == 0) {
+        if (m_currPlayerIndexT1 >= m_gameData->m_teamVector->at(0)->m_players->size() ||
+        m_gameData->m_teamVector->at(0)->m_isAllOut)
+        result = true;
+    }else if (teamIndex == 1) {
+        if (m_currPlayerIndexT2 >= m_gameData->m_teamVector->at(1)->m_players->size() ||
+            m_gameData->m_teamVector->at(1)->m_isAllOut)
+            result = true;
+    }
+    return result;
+        
+}
+
 void MainScene::updateCurrentPlayerBattingStatus() {
     
     if (m_gameData != nullptr) {
-        m_gameData->m_teamVector->at(0)->m_players->at(m_currPlayerIndexT1)->m_battingStatus = BATTING_STATUS::BATSMAN_BATTING;
-        m_gameData->m_teamVector->at(1)->m_players->at(m_currPlayerIndexT2)->m_battingStatus = BATTING_STATUS::BATSMAN_BATTING;
+        
+        if (!isTeamAllOut(0))
+            m_gameData->m_teamVector->at(0)->m_players->at(m_currPlayerIndexT1)->m_battingStatus = BATTING_STATUS::BATSMAN_BATTING;
+        
+       if (!isTeamAllOut(1))
+           m_gameData->m_teamVector->at(1)->m_players->at(m_currPlayerIndexT2)->m_battingStatus = BATTING_STATUS::BATSMAN_BATTING;
     }
 }
 
@@ -379,10 +441,10 @@ void MainScene::updateDataPerBall(int teamIndex, int run, std::string action) {
         if (isDeliveryValid) {
             m_gameData->m_teamVector->at(teamIndex)->m_players->at(playerIndex)->m_ballsPlayed += 1;
             
-            if (m_ballCurrOver % 2 == 0) {
-                int ballInCurrOver = (int)(m_ballCurrOver/2) % 6;
+            if (m_ballsTillNow % 2 == 0) {
+                int ballInCurrOver = (int)(m_ballsTillNow/2) % 6;
                 m_gameData->m_numOfBall = ballInCurrOver;
-                m_gameData->m_currOver = (int)(m_ballCurrOver/2)/6;
+                m_gameData->m_currOver = (int)(m_ballsTillNow/2)/6;
             }
         }
     }
@@ -400,7 +462,7 @@ void MainScene::playBallItemCallback(Ref* pSender){
         int runs = getRunForBallAction(m_lastBallAction);
         
         if (getIsValidDelivery(m_lastBallAction))
-            m_ballCurrOver++;
+            m_ballsTillNow++;
 
         updateNotification(m_lastBallAction);
         updateDataPerBall(m_teamTurnIndex, runs, m_lastBallAction);
@@ -410,9 +472,60 @@ void MainScene::playBallItemCallback(Ref* pSender){
             updateDataOnWicket(m_teamTurnIndex, m_lastBallAction);
             updateUIOnWicketFall();
         }
+        
+        if ((m_ballsTillNow / 2) >= (m_gameData->m_totalOvers * 6)){
+            setAllOverUp(true);
+            handleAllOverUp();
+        }else if (isTeamAllOut(0) && m_gameData->m_teamVector->at(1)->m_teamScore >= m_gameData->m_teamVector->at(1)->m_targetToChase) {
+            m_gameData->m_teamVector->at(1)->m_isWinner = true;
+            handleGameOver(TEAM_TWO_WIN);
             
-        setNextGameState(STATE_ANIMATION);
+        }else if (isTeamAllOut(1) && m_gameData->m_teamVector->at(0)->m_teamScore >= m_gameData->m_teamVector->at(0)->m_targetToChase) {
+            m_gameData->m_teamVector->at(0)->m_isWinner = true;
+            handleGameOver(TEAM_ONE_WIN);
+            
+        }else if (isTeamAllOut(0) && isTeamAllOut(1)) {
+            if (m_gameData->m_teamVector->at(0)->m_teamScore < m_gameData->m_teamVector->at(0)->m_targetToChase) {
+                m_gameData->m_teamVector->at(1)->m_isWinner = true;
+                handleGameOver(TEAM_TWO_WIN);
+                
+            }else if (m_gameData->m_teamVector->at(1)->m_teamScore < m_gameData->m_teamVector->at(1)->m_targetToChase) {
+                m_gameData->m_teamVector->at(0)->m_isWinner = true;
+                handleGameOver(TEAM_ONE_WIN);
+                
+            }else {
+                CCLOG("game tied");
+                handleGameOver(MATCH_TIE);
+            }
+            
+        }else{
+            setNextGameState(STATE_ANIMATION);
+        }
     }
+}
+
+void MainScene::handleAllOverUp() {
+    
+    RESULT_STATUS status;
+    if (m_gameData->m_teamVector->at(0)->m_teamScore > m_gameData->m_teamVector->at(1)->m_teamScore) {
+        m_gameData->m_teamVector->at(0)->m_isWinner = true;
+        status = TEAM_ONE_WIN;
+    }else if (m_gameData->m_teamVector->at(1)->m_teamScore > m_gameData->m_teamVector->at(0)->m_teamScore) {
+        m_gameData->m_teamVector->at(1)->m_isWinner = true;
+        status = TEAM_TWO_WIN;
+    }else if (m_gameData->m_teamVector->at(1)->m_teamScore == m_gameData->m_teamVector->at(0)->m_teamScore) {
+        status = MATCH_TIE;
+    }
+    
+    handleGameOver(status);
+}
+
+bool MainScene::getIsAllOverUp() {
+    return getIsAllOverUp();;
+}
+
+void MainScene::setAllOverUp(bool overUp) {
+    m_isAllOverUp = overUp;
 }
 
 void MainScene::dataForBallAction(){
@@ -424,12 +537,12 @@ void MainScene::dataForBallAction(){
     m_ballActionVector->push_back("Dot Ball");
     m_ballActionVector->push_back("Double");
     m_ballActionVector->push_back("Triple");
-    m_ballActionVector->push_back("Run Out");
+//    m_ballActionVector->push_back("Run Out");
     m_ballActionVector->push_back("Four");
-    m_ballActionVector->push_back("No Ball");
+//    m_ballActionVector->push_back("No Ball");
     m_ballActionVector->push_back("Six");
     m_ballActionVector->push_back("1 By Run");
-    m_ballActionVector->push_back("Wide Ball");
+//    m_ballActionVector->push_back("Wide Ball");
     m_ballActionVector->push_back("Out");
     m_ballActionVector->push_back("1 Leg By Run");
 }
@@ -624,7 +737,8 @@ void MainScene::createFooterItems() {
 
 void MainScene::updateCurrentPlayerUITeamOne(bool updatePlayerImage) {
     
-    if (m_gameData != nullptr) {
+    if (m_gameData != nullptr && !isTeamAllOut(0)) {
+        
         Player* currPlayerTeam1 =  m_gameData->m_teamVector->at(0)->m_players->at(m_currPlayerIndexT1);
         m_currPlayerRunT1Label->setString(std::to_string(currPlayerTeam1->m_runs));
         m_currPlayerBallT1Label->setString(std::to_string(currPlayerTeam1->m_ballsPlayed));
@@ -634,12 +748,21 @@ void MainScene::updateCurrentPlayerUITeamOne(bool updatePlayerImage) {
             m_teamOneCurrPlayerImage->setTexture(temp->getTexture());
             m_currPlayerNameLabelT1->setString(currPlayerTeam1->m_playerName);
         }
+    } else if (isTeamAllOut(0)) {
+        
+        Sprite* temp = Sprite::create(IMAGE_PATH"allout.jpeg");
+        m_teamOneCurrPlayerImage->setTexture(temp->getTexture());
+        m_currPlayerNameLabelT1->setString("ALL OUT");
+        
+        m_currPlayerRunT1Label->setString("");
+        m_currPlayerBallT1Label->setString("");
+        
     }
 }
 
 void MainScene::updateCurrentPlayerUITeamTwo(bool updatePlayerImage) {
     
-    if (m_gameData != nullptr) {
+    if (m_gameData != nullptr && !isTeamAllOut(1)) {
         Player* currPlayerTeam2 =  m_gameData->m_teamVector->at(1)->m_players->at(m_currPlayerIndexT2);
         m_currPlayerRunT2Label->setString(std::to_string(currPlayerTeam2->m_runs));
         m_currPlayerBallT2Label->setString(std::to_string(currPlayerTeam2->m_ballsPlayed));
@@ -649,6 +772,13 @@ void MainScene::updateCurrentPlayerUITeamTwo(bool updatePlayerImage) {
             m_teamTwoCurrPlayerImage->setTexture(temp->getTexture());
             m_currPlayerNameLabelT2->setString(currPlayerTeam2->m_playerName);
         }
+    }else if (isTeamAllOut(1)) {
+        Sprite* temp = Sprite::create(IMAGE_PATH"allout.jpeg");
+        m_teamTwoCurrPlayerImage->setTexture(temp->getTexture());
+        m_currPlayerNameLabelT2->setString("ALL OUT");
+        
+        m_currPlayerRunT2Label->setString("");
+        m_currPlayerBallT2Label->setString("");
     }
     
 }

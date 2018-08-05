@@ -159,7 +159,7 @@ TableViewCell* ScoreboardLayer::tableCellAtIndex(TableView *table, ssize_t idx){
             Label* battingStatusText= Label::createWithTTF(statusText,FONT_HEADLINE,45);
             battingStatusText->setAnchorPoint(Vec2(0, 0.5));
             battingStatusText->setColor(Color3B::BLACK);
-            battingStatusText->setPosition(Vec2(tableWidth * 0.3, rowHeight * 0.5));
+            battingStatusText->setPosition(Vec2(tableWidth * 0.285, rowHeight * 0.5));
             cellBg->addChild(battingStatusText);
         }
         
@@ -173,7 +173,7 @@ TableViewCell* ScoreboardLayer::tableCellAtIndex(TableView *table, ssize_t idx){
             Label* runScoredText= Label::createWithTTF(std::to_string(runScored),FONT_HEADLINE,42);
             runScoredText->setAnchorPoint(Vec2(1, 0.5));
             runScoredText->setColor(Color3B::BLACK);
-            runScoredText->setPosition(Vec2(tableWidth * 0.432, rowHeight * 0.5));
+            runScoredText->setPosition(Vec2(tableWidth * 0.43, rowHeight * 0.5));
             cellBg->addChild(runScoredText);
             
             if (idx != m_gameData->m_maxPlayer) {

@@ -52,19 +52,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     
     Size frameSize = glview->getFrameSize();
-    
-    //Fix by height if iPad or a tablet which has double the width of our design size.
-    //Else fix by width
-    
-    //    if ((frameSize.width / frameSize.height == 1.5)
-    //        || frameSize.width / designResolutionSize.width > 2) {
-    //        glview->setDesignResolutionSize(designResolutionSize.width,
-    //                                        designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
-    //    } else {
-    //        glview->setDesignResolutionSize(designResolutionSize.width,
-    //                                        designResolutionSize.height, ResolutionPolicy::FIXED_WIDTH);
-    //    }
-    
     if(frameSize.height/frameSize.width > 1.5) {
         glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_WIDTH);
         
@@ -81,11 +68,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
 //     create a scene. it's an autorelease object
-//    auto scene = SplashScene::createScene();
-//    director->runWithScene(scene);
-
-    auto scene = MainScene::createScene();
+    auto scene = SplashScene::createScene();
     director->runWithScene(scene);
+
+//    auto scene = MainScene::createScene();
+//    director->runWithScene(scene);
     
     return true;
 }

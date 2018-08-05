@@ -12,6 +12,12 @@ enum GAME_STATES {
     STATE_RESULT
 };
 
+enum RESULT_STATUS {
+    TEAM_ONE_WIN,
+    TEAM_TWO_WIN,
+    MATCH_TIE
+};
+
 enum BATTING_STATUS {
     BATSMAN_YET_TO_BAT,
     BATSMAN_BATTING,
@@ -65,9 +71,13 @@ struct Team {
   
     std::string m_teamName;
     int m_teamScore;
+    int m_targetToChase;
     int m_wicketDown;
     int m_extraRun;
     int m_playersPerTeam;
+    bool m_isAllOut;
+    bool m_isWinner;
+    
     std::vector<Player*> *m_players;
     
     Team() {
@@ -76,6 +86,9 @@ struct Team {
         m_playersPerTeam = 0;
         m_wicketDown = 0;
         m_extraRun = 0;
+        m_targetToChase = INT_MAX;
+        m_isWinner = false;
+        m_isAllOut = false;
         m_players = new std::vector<Player*>();
     }
     
@@ -84,8 +97,10 @@ struct Team {
         m_teamScore = team->m_teamScore;
         m_wicketDown = team->m_wicketDown;
         m_extraRun = team->m_extraRun;
+        m_targetToChase = team->m_targetToChase;
         m_playersPerTeam = team->m_playersPerTeam;
-        
+        m_isAllOut = team->m_isAllOut;
+        m_isWinner = team->m_isWinner;
         m_players = new std::vector<Player*>();
         for (int i=0; i < team->m_players->size(); i++) {
             m_players->push_back(new Player(team->m_players->at(i)));
@@ -97,8 +112,10 @@ struct Team {
         m_teamScore = team.m_teamScore;
         m_wicketDown = team.m_wicketDown;
         m_extraRun = team.m_extraRun;
+        m_targetToChase = team.m_targetToChase;
         m_playersPerTeam = team.m_playersPerTeam;
-        
+        m_isAllOut = team.m_isAllOut;
+        m_isWinner = team.m_isWinner;
         m_players = new std::vector<Player*>();
         for (int i=0; i < team.m_players->size(); i++) {
             m_players->push_back(new Player(team.m_players->at(i)));

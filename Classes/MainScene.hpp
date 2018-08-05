@@ -40,7 +40,8 @@ public:
     std::vector<std::string> *m_ballActionVector;
     
     int m_teamTurnIndex;
-    int m_ballCurrOver;
+    int m_ballsTillNow;
+    bool m_isAllOverUp;
     std::string m_lastBallAction;
     
     LayerColor* m_backgroundLayer;
@@ -100,16 +101,22 @@ public:
     void createGroundImage();
     void createNextButton();
     
+    void setAllOverUp(bool overUp);
+    bool getIsAllOverUp();
     bool getIsValidDelivery(std::string action);
     bool isWicketDown(std::string action);
     bool isRunExtra(std::string action);
+    bool isTeamAllOut(int teamIndex);
     
     void updateGame(float dt);
     
     void hideTurnArrows();
     void setNextGameState(GAME_STATES nextState);
     void setGroundText(std::string message);
-    void handleGameOver();
+    void handleGameOver(RESULT_STATUS matchStatus);
+    void handleTeamAllOut(int teamIndex);
+    void handleAllOverUp();
+    
     void onTurnReceived(int teamIndex);
     
     void updateDataPerBall(int teamIndex, int run, std::string action);
