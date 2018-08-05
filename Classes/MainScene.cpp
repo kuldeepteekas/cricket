@@ -385,7 +385,8 @@ void MainScene::nextItemCallback(Ref* pSender) {
         messageCount++;
         return;
     }else if (messageCount == 1) {
-        std::string teamName = m_gameData->m_teamVector->at(0)->m_teamName;
+        m_tossWonIndex = RandomHelper::random_int(0, 1);
+        std::string teamName = m_gameData->m_teamVector->at(m_tossWonIndex)->m_teamName;
         message = teamName + " won the Toss and will face the first ball";
         setGroundText(message);
         updateNotification("TOSS");
@@ -407,7 +408,7 @@ void MainScene::nextItemCallback(Ref* pSender) {
         messageCount++;
         return;
     }else if (messageCount == 4) {
-        message = "Team scoring maximum runs after 5 overs will win. \n Good Luck !";
+        message = "Team scoring maximum runs in given Overs will win. \n Good Luck !";
         setGroundText(message);
         messageCount++;
         return;
@@ -415,25 +416,28 @@ void MainScene::nextItemCallback(Ref* pSender) {
         m_nextItem->setVisible(false);
         m_nextItem->setEnabled(false);
         setGroundText("");
-        m_teamTurnIndex = 0;
+        m_teamTurnIndex = m_tossWonIndex;
         updateNotification("PLAY");
-        setNextGameState(STATE_TURN_TEAM_ONE);
-        messageCount = 0;
+        
+        if (m_teamTurnIndex == 0)
+            setNextGameState(STATE_TURN_TEAM_ONE);
+        else
+            setNextGameState(STATE_TURN_TEAM_TWO);
         return;
     }
 }
 
 int MainScene::getRandomNumber(int min, int max) {
-    int num = RandomHelper::random_int(min, max);
-    return num;
+//    int num = RandomHelper::random_int(min, max);
+//    return num;
     
     //old implementation
-    /*
+    
     srand(time(0));
     int num = (rand() % (max - min + 1)) + min;
     CCLOG("Index is %d", num);
     return num;
-     */
+    
 }
 
 void MainScene::updateDataPerBall(int teamIndex, int run, std::string action) {
@@ -551,14 +555,15 @@ void MainScene::dataForBallAction(){
     
     m_ballActionVector->push_back("Single");
     m_ballActionVector->push_back("Dot Ball");
-    m_ballActionVector->push_back("Wide Ball");
-    m_ballActionVector->push_back("Out");
     m_ballActionVector->push_back("Double");
+    m_ballActionVector->push_back("Out");
+    m_ballActionVector->push_back("Wide Ball");
     m_ballActionVector->push_back("Triple");
     m_ballActionVector->push_back("1 Leg By Run");
-//    m_ballActionVector->push_back("Run Out");
+    m_ballActionVector->push_back("Double");
+    m_ballActionVector->push_back("Run Out");
     m_ballActionVector->push_back("Four");
-//    m_ballActionVector->push_back("No Ball");
+    m_ballActionVector->push_back("No Ball");
     m_ballActionVector->push_back("1 By Run");
     m_ballActionVector->push_back("Six");
 }
@@ -1038,7 +1043,7 @@ void MainScene::initialiseGameData() {
     playerThree->m_isMyPlayer = false;
     playerThree->m_isCaptain = false;
     playerThree->m_playerName = "Sachin Tendulkar";
-    playerThree->m_imagePath = "sachinTendulkar.png";
+    playerThree->m_imagePath = "sachinTendulkar.jpg";
     
     Player* playerFour = new Player();
     playerFour->m_isMyPlayer = false;

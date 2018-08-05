@@ -40,6 +40,7 @@ public:
     GameData* m_gameData;
     std::vector<std::string> *m_ballActionVector;
     
+    int m_tossWonIndex;
     int messageCount;
     int m_teamTurnIndex;
     int m_ballsTillNow;
